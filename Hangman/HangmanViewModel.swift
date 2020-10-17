@@ -94,7 +94,7 @@ class HangmanViewModel : ObservableObject {
         if(didWin()){
             return "YOU WON!"
         } else {
-            return "You Lose! The name was ".appending(phrase).appending("!too lat")
+            return "You Lose! The name was ".appending(phrase).appending("!")
         }
     }
 }
