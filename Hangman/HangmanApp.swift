@@ -3,7 +3,7 @@
 //  Hangman
 //
 //  Created by Lauren Go on 2020/09/29.
-//
+//  Implemented by Ryan Tan 
 
 import SwiftUI
 

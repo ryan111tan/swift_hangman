@@ -3,22 +3,25 @@
 //  Hangman
 //
 //  Created by Lauren Go on 2020/09/29.
-//
+//  Implemented by Ryan Tan 
 
 import Foundation
 
 class HangmanViewModel : ObservableObject {
     
-    // TODO: Add @Published properties used to control apperance of ContentView:
-    // 1. Number of incorrect guesses. To be used for the hangman image, checking win/lose states, etc.
-    // 2. Incorrect guesses. An array that stores the incorrectly guessed characters.
-    // 3. Progress towards the phrase. A string that starts as "-" and updates with each correct guess.
-    // 4. Game status. Boolean of whether or not the game is over.
+   
     
-    // TODO: Add variables to handle game logic:
-    // 1. The phrase to be guessed by the user randomly chosen from the phrases array.
-    // 2. Add phrases to the phrases array to customize your experience or just have some fun!
-    let phrases: [String] = ["hello", "goodbye", "bears", "corona", "covid", "facemask", "macbook", "oski"] // you can change these
+  //Declared the published variables necessary for this ObservableObject to work.
+    
+    @Published var incorrectGuesses: Int = 0
+    @Published var progress: String = ""
+    @Published var incorrect:[Character] = []
+    @Published var gameOver: Bool = false
+    var phrase: String = ""
+    let numOfGuesses = 6
+    
+   //List of basketball player names that will serve as the prompt for hangman.
+    let phrases: [String] = ["lebronjames", "kevindurant", "stephcurry", "jimmybutler", "kawhileonard", "lukadoncic", "jamesharden", "giannisantetokounmpo", "paulgeorge", "klaythompson", "kembawalker", "russellwestbrook", "joelembiid", "kristapsporzingis", "nikolajokic", "kyrieirving", "bensimmons", "bradleybeal", "draymondgreen"] // you can change these
     
     /** Initializes a new game. */
     init() {
@@ -28,10 +31,16 @@ class HangmanViewModel : ObservableObject {
     
     /** Resets model properties to restart game. */
     func restart() {
-        // TODO: This function resets the game to its initial state. Think about what variables and @Published properties should look like when starting a new game. Here are some things to think about:
-        // 1. Randomly select a new phrase from the phrases array and set the game phrase.
-        // 2. Reset your progress string to reflect the initial state of this newly selected phrase.
-        // 3. Reset other things to reflect the intial state like incorrect guesses, number of incorrect guesses, game status, etc.
+        //Pick a phrase from the list of names
+        //reset the progress, incorrectGuesses, and the incorrect array.
+        phrase = phrases.randomElement()!
+        incorrectGuesses = 0
+        progress = ""
+        for _ in phrase {
+            progress.append("-")
+        }
+        incorrect = []
+        gameOver = false
     }
     
     /**
@@ -39,8 +48,8 @@ class HangmanViewModel : ObservableObject {
      - Returns: A Boolean for if the user won or not and has guesses left.
      */
     public func didLose() -> Bool {
-        // TODO: This function should check the number of incorrect guesses to determine if the user has lost the game.
-        return false
+        //return if you lost.
+        return incorrectGuesses >= numOfGuesses
     }
     
     /**
@@ -48,30 +57,44 @@ class HangmanViewModel : ObservableObject {
      - Returns: A Boolean for if the user won or not and has guesses left.
      */
     public func didWin() -> Bool {
-        // TODO: This function should check the number of incorrect guesses and the progress variable to determine if the user has won the game.
-        return false
+        //return if you won.
+        if (incorrectGuesses < numOfGuesses) && (progress.lowercased() == phrase.lowercased())  {
+            return true
+        } else {
+            return false
+        }
     }
     
     /**
      Processes the user's guess.
      - Parameter guess letter: Character for the letter that is being guessed.
      */
-    func makeGuess(guess letter: Character) {
-        // TODO: Update variables and parameters to reflect the user's input.
-        // 1. Check that the user has not already guessed the letter.
-        // 2. If the phrase contains the guessed letter, update the progress string to show that letter.
-        // 3. If the phrase does not contain the guessed letter, add the letter to the incorrect guesses array and iterate the incorrect guesses count.
-    }
+    func makeGuess(guess_letter: Character) {
+        //first determine the letter in question.
+        //Iterate through each letter of the phrase, if the phrase contains the letter in question, then update the letter.
+        let lcLetter = Character(guess_letter.lowercased())
+        if(phrase.contains(lcLetter)) {
+            
+            let swapped = phrase.map{ c in progress.contains(c) || lcLetter == c ? c: Character("-")}
+            progress = String(swapped)
+            } else {
+                if(!incorrect.contains(lcLetter)) {
+                    incorrect.append(lcLetter)
+                    incorrectGuesses += 1
+                    
+                }
+            }
+        }
     
     /**
      Returns a message to notify the winner if they won or not
      - Returns: Message depending on whether they won or not
      */
     public func getFinalMessage() -> String {
-        // TODO: Check the game state using the didWin/didLose functions and return an appropriate string.
-        return ""
+        if(didWin()){
+            return "YOU WON!"
+        } else {
+            return "You Lose! The name was ".appending(phrase).appending("!too lat")
+        }
     }
-    
-    
-    
 }
